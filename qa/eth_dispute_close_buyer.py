@@ -60,8 +60,8 @@ class EthDisputeCloseBuyerTest(OpenBazaarTestFramework):
         # post listing to alice
         with open('testdata/v5/eth_listing.json') as listing_file:
             listing_json = json.load(listing_file, object_pairs_hook=OrderedDict)
-        listing_json["item"]["priceCurrency"]["code"] = "T" + self.cointype
-        listing_json["metadata"]["acceptedCurrencies"] = ["T" + self.cointype]
+        listing_json["item"]["priceCurrency"]["code"] = f"T{self.cointype}"
+        listing_json["metadata"]["acceptedCurrencies"] = [f"T{self.cointype}"]
 
         listing_json["moderators"] = [moderatorId]
         api_url = alice["gateway_url"] + "ob/listing"
@@ -86,7 +86,7 @@ class EthDisputeCloseBuyerTest(OpenBazaarTestFramework):
             order_json = json.load(order_file, object_pairs_hook=OrderedDict)
         order_json["items"][0]["listingHash"] = listingId
         order_json["moderator"] = moderatorId
-        order_json["paymentCoin"] = "T" + self.cointype
+        order_json["paymentCoin"] = f"T{self.cointype}"
         api_url = bob["gateway_url"] + "ob/purchase"
         r = requests.post(api_url, data=json.dumps(order_json, indent=4))
         if r.status_code == 404:
@@ -124,13 +124,14 @@ class EthDisputeCloseBuyerTest(OpenBazaarTestFramework):
 
         # fund order
         spend = {
-            "currencyCode": "T" + self.cointype,
+            "currencyCode": f"T{self.cointype}",
             "address": payment_address,
             "amount": payment_amount["amount"],
             "feeLevel": "NORMAL",
             "requireAssociateOrder": True,
-            "orderID": orderId
+            "orderID": orderId,
         }
+
         api_url = bob["gateway_url"] + "ob/orderspend"
         r = requests.post(api_url, data=json.dumps(spend, indent=4))
         if r.status_code == 404:

@@ -37,8 +37,8 @@ class EthCompleteDirectOnlineTest(OpenBazaarTestFramework):
         # post listing to alice
         with open('testdata/v5/eth_listing.json') as listing_file:
             listing_json = json.load(listing_file, object_pairs_hook=OrderedDict)
-        listing_json["item"]["priceCurrency"]["code"] = "T" + self.cointype
-        listing_json["metadata"]["acceptedCurrencies"] = ["T" + self.cointype]
+        listing_json["item"]["priceCurrency"]["code"] = f"T{self.cointype}"
+        listing_json["metadata"]["acceptedCurrencies"] = [f"T{self.cointype}"]
         api_url = alice["gateway_url"] + "ob/listing"
         r = requests.post(api_url, data=json.dumps(listing_json, indent=4))
         print("api_url : ", api_url)
@@ -64,7 +64,7 @@ class EthCompleteDirectOnlineTest(OpenBazaarTestFramework):
         with open('testdata/v5/order_direct.json') as order_file:
             order_json = json.load(order_file, object_pairs_hook=OrderedDict)
         order_json["items"][0]["listingHash"] = listingId
-        order_json["paymentCoin"] = "T" + self.cointype
+        order_json["paymentCoin"] = f"T{self.cointype}"
         api_url = bob["gateway_url"] + "ob/purchase"
         r = requests.post(api_url, data=json.dumps(order_json, indent=4))
         if r.status_code == 404:
@@ -101,13 +101,14 @@ class EthCompleteDirectOnlineTest(OpenBazaarTestFramework):
 
         # fund order
         spend = {
-            "currencyCode": "T" + self.cointype,
+            "currencyCode": f"T{self.cointype}",
             "address": payment_address,
             "amount": payment_amount["amount"],
             "feeLevel": "NORMAL",
             "requireAssociateOrder": True,
-            "orderID": orderId
+            "orderID": orderId,
         }
+
         api_url = bob["gateway_url"] + "ob/orderspend"
         print("################################")
         print("before spend post : ", api_url)
